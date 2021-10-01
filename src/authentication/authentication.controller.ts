@@ -9,13 +9,15 @@ import { SignInDto, SignUpDto } from './dto';
 export class AuthenticationController {
   constructor(private authenticationService: AuthenticationService) {}
 
-  @Post('signUp')
-  async signUp(@Res() response: Response, @Body() body: SignUpDto) {
-    return response.status(201).send();
-  }
-
   @Post('signIn')
   async signIn(@Res() response: Response, @Body() body: SignInDto) {
+    const result = await this.authenticationService.signIn();
     return response.status(200).send();
+  }
+
+  @Post('signUp')
+  async signUp(@Res() response: Response, @Body() body: SignUpDto) {
+    const result = await this.authenticationService.signUp();
+    return response.status(201).send();
   }
 }
