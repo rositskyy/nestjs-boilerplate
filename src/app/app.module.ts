@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import configuration from 'config/configuration';
+import { configuration, configurationValidationSchema } from 'config/configuration';
 import { AuthenticationModule } from 'src/authentication/authentication.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
+    ConfigModule.forRoot({ isGlobal: true, load: [configuration], validationSchema: configurationValidationSchema }),
     TypeOrmModule.forRoot({
       type: process.env.DB_TYPE,
       host: process.env.DB_HOST,
