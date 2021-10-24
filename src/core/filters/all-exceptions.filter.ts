@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, ServiceUnavailableException } from '@nestjs/common';
 import { ValidatePipeException } from '../exceptions';
 
 @Catch()
@@ -8,23 +8,25 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse();
     const request = ctx.getRequest();
 
-    let statusCode;
-    let message;
-
-    if (exception instanceof HttpException) {
-      statusCode = exception.getStatus();
-      message = exception.message;
-    } else if (exception instanceof ValidatePipeException) {
-      statusCode = exception.statusCode;
-      message = { issue: exception.message, errors: exception.errors };
-    } else {
-      statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-      message = 'Internal server error';
+    if (exception instanceof ServiceUnavailableException) {
+      return response.status(exception.getStatus()).json(exception.getResponse());
     }
 
-    response.status(statusCode).json({
-      statusCode,
-      message,
+    if (exception instanceof HttpException) {
+      return response.status(exception.getStatus()).json({ statusCode: exception.getStatus(), message: exception.message });
+    }
+
+    if (exception instanceof ValidatePipeException) {
+      return response.status(exception.statusCode).json({
+        statusCode: exception.statusCode,
+        message: exception.message,
+        errors: exception.errors,
+      });
+    }
+
+    response.status(500).json({
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Internal server error',
       path: request.url,
     });
   }

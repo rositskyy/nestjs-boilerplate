@@ -22,12 +22,12 @@ export const configuration = () => ({
 });
 
 export const configurationValidationSchema = Joi.object({
-  MODE: Joi.string().valid('development', 'production', 'test', 'provision').default('development'),
-  PORT: Joi.number().default(8288),
-  DB_TYPE: Joi.string(),
-  DB_HOST: Joi.string(),
-  DB_PORT: Joi.number(),
-  DB_USERNAME: Joi.string(),
-  DB_PASSWORD: Joi.string(),
-  DB_DATABASE: Joi.string(),
+  MODE: Joi.string().valid('development', 'production', 'test', 'provision').default('development').required(),
+  PORT: Joi.number().default(8288).required(),
+  DB_TYPE: Joi.string().required(),
+  DB_HOST: Joi.string().required(),
+  DB_PORT: Joi.number().required(),
+  DB_USERNAME: Joi.string().required(),
+  DB_PASSWORD: Joi.string().required(),
+  DB_DATABASE: Joi.string().required(),
 });

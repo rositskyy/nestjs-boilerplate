@@ -7,14 +7,15 @@ import { AllExceptionsFilter, GlobalPipes } from './core';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.setGlobalPrefix('v1');
   const l = new Logger('app');
 
-  const config = new DocumentBuilder().setTitle('Todo list').setVersion('1.0').build();
+  app.setGlobalPrefix('v1');
+  app.enableShutdownHooks();
 
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(new GlobalPipes());
 
+  const config = new DocumentBuilder().setTitle('Todo list').setVersion('1.0').build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 

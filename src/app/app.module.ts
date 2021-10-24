@@ -2,12 +2,15 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { configuration, configurationValidationSchema } from 'config/configuration';
-import { AuthenticationModule } from 'src/authentication/authentication.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TerminusModule } from '@nestjs/terminus';
+import { HealthController } from 'src/health/health.controller';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
+    TerminusModule,
     ConfigModule.forRoot({ isGlobal: true, load: [configuration], validationSchema: configurationValidationSchema }),
     TypeOrmModule.forRoot({
       type: process.env.DB_TYPE,
@@ -20,9 +23,9 @@ import { AppService } from './app.service';
       synchronize: process.env.MODE === 'development' ? true : false,
       autoLoadEntities: true,
     }),
-    AuthenticationModule,
+    HttpModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, HealthController],
   providers: [AppService],
 })
 export class AppModule {}
